@@ -55,11 +55,13 @@ class Board:
         return True
         
     def map_sum(self, iterable):
-        # Sum, but takes care of None's, X's and O's
+        # Count, but takes care of None's
+        # Sequencing, selection, iteration!
+        if None in iterable:
+            return 100
+        
         total = 0
         for i in iterable:
-            if i is None:
-                return 100 # Arbitrary value
             if i == "O":
                 total += 1            
         return total
@@ -69,16 +71,6 @@ class Board:
         # due to the nature of the game. Therefore, detection order is arbitrary.
         
         board = self.board
-
-        # Check if tied
-        tied = True
-        for i in board:
-            if None in i:
-                tied = False
-                break
-
-        if tied:
-            return Status.TIE
 
         # Check rows
         for row in board:
@@ -109,6 +101,16 @@ class Board:
         elif diag_right == 0:
             return Status.CPU_WIN
 
+        # Check if tied
+        tied = True
+        for i in board:
+            if None in i:
+                tied = False
+                break
+
+        if tied:
+            return Status.TIE
+        
         return Status.ONGOING
     
     def to_immutable_key(self):
@@ -117,8 +119,8 @@ class Board:
 
 def test_program():
     test_board = Board()
-    print(test_board.map_sum(["X", None, "X"]))
-    print(test_board.map_sum(["O", "O", "O"]))
+    assert test_board.map_sum(["X", None, "X"]) == 100
+    assert test_board.map_sum(["O", "O", "O"]) == 3
           
 # Because of the nature of the algorithm, all game states are computed redundantly.
 # Thus, we can save the game states in an O(1) access data structure like a hashmap.
@@ -214,15 +216,3 @@ while board.get_status() == Status.ONGOING:
 print(board)
 print(board.get_status().value)
 print("Program ended.")
-
-    
-
-
-
-
-
-
-
-            
-        
-        
