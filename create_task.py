@@ -61,7 +61,7 @@ class Board:
         # Count, but takes care of None's
         # Sequencing, selection, iteration!
         if None in iterable:
-            return 100
+            return -1
         
         total = 0
         for i in iterable:
