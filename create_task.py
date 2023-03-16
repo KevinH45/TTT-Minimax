@@ -22,14 +22,17 @@ class Board:
             [None, None, None]]
         
     def __repr__(self):
-        s = ""
+        s = "  0 1 2 \n"
+        count = 0
         for i in self.board:
+            s+=str(count)+"|"
             for j in i:
                 if j is None: s+="_"
                 else: s+=j
                 s+="|"
             s=s[0:-1] # Get rid of last "|"
             s += "\n"
+            count += 1
         return s
     
     def get_valid_moves(self):
@@ -130,7 +133,8 @@ memo = {}
 def minimax(board, depth, player):
 
     # Base Case 1: Recursive search depth is 1
-    # Return the move to make
+    # Return the best move to make, given the board.
+    # Is NOT memoized, as it has a different return value.
     if depth == 1:
         moves = board.get_valid_moves()
         maximum = float("-inf")
