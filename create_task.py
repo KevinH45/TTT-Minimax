@@ -262,7 +262,6 @@ while board.get_status() == Status.ONGOING:
 print(board)
 print(board.get_status().value)
 print("Program ended.")
-x = 0
-while True:
-    x+=1
-    x-=1
+print("Press ENTER or RETURN to quit.")
+input()
+
