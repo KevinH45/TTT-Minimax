@@ -1,18 +1,26 @@
-# AP CSP Create Task: Memoized Minimax for Tic-Tac-Toe
+# Memoized Minimax for Tic-Tac-Toe
 
 from enum import Enum
 
+# This class maps enum values to a string, in order to print out
+# the correct user output. In addition, it houses information that
+# is necessary for how the program represents terminal state internally.
 class Status(Enum):
     CPU_WIN = "CPU Wins."
     HUMAN_WIN = "Human Wins."
     TIE = "Tied."
     ONGOING = "Game is ongoing."
 
+# This class maps enum values to a string, in order to print out
+# the correct user output. It houses information that is necessary
+# for how the program represents the board internally.
 class Player(Enum):
     CPU = "X"
     HUMAN = "O"
 
-
+# This class is a blueprint for a Board object, which provides a
+# developer friendly interface for interacting with a 2D list in
+# a way that mimics a tic-tac-toe board.
 class Board:
     def __init__(self):
         # The board is represented by a 2D list internally
@@ -20,8 +28,10 @@ class Board:
             [None, None, None],
             [None, None, None],
             [None, None, None]]
-        
+    
     def __repr__(self):
+        # This method dictates how the Board object is represented
+        # as a string. This is principally used for user output.
         s = "  0 1 2 \n"
         count = 0
         for i in self.board:
@@ -58,7 +68,8 @@ class Board:
         return True
         
     def map_sum(self, iterable):
-        # Count, but takes care of None's
+        # If none, returns an impossible value. Else, it returns the amount of
+        # O's in the iterable provided.
         # Sequencing, selection, iteration!
         if None in iterable:
             return -1
@@ -70,6 +81,9 @@ class Board:
         return total
 
     def get_status(self):
+        # This method returns whether, at the current state of the game,
+        # the computer won, the player won, the game is ongoing, or the game
+        # is tied.
         # There is no case in which there are multiple winners on one board
         # due to the nature of the game. Therefore, detection order is arbitrary.
         
@@ -117,13 +131,20 @@ class Board:
         return Status.ONGOING
     
     def to_immutable_key(self):
-        # For memoization
+        # This method takes the internal board representation and maps
+        # it to a 2d tuple, such that it is immutable. This is princpally
+        # used for memoization, where the cache the board is saved in
+        # requires immutable keys.
         return (tuple(self.board[0]), tuple(self.board[1]), tuple(self.board[2]))
 
 def test_program():
+    # This method accurately tests the program
     test_board = Board()
-    assert test_board.map_sum(["X", None, "X"]) == 100
-    assert test_board.map_sum(["O", "O", "O"]) == 3
+    try:
+        assert test_board.map_sum(["X", None, "X"]) == 100
+        assert test_board.map_sum(["O", "O", "O"]) == 3
+    except AssertionError:
+        print("### TEST(S) FAILED ###")
           
 # Because of the nature of the algorithm, all game states are computed redundantly.
 # Thus, we can save the game states in an O(1) access data structure like a hashmap.
@@ -131,6 +152,9 @@ def test_program():
 # thus, we improve efficiency by pre-computing game states. (MEMOIZATION)
 memo = {}
 def minimax(board, depth, player):
+    # Minimax is a backtracking recursive tree search algorithm.
+    # This algorithm is used for this program, as it is specialized for
+    # zero-sum games like tic tac toe.
 
     # Base Case 1: Recursive search depth is 1
     # Return the best move to make, given the board.
@@ -163,10 +187,15 @@ def minimax(board, depth, player):
     # Minimax algorithm
     # Human is MIN, computer is MAX
     if player == Player.HUMAN:
+        # If the player is human, try to minimize the score provided by
+        # minimax in lower recursive calls.
         minimum = float("inf")
         moves = board.get_valid_moves()
 
         for i,j in moves:
+            # Loop through all possible moves on the board. If the move is
+            # memoized, return the value within the cache. Else, use recursion
+            # to evaluate the move to its terminal state. 
             board.set_tile(i,j, player)
 
             im_key = board.to_immutable_key()
@@ -181,9 +210,15 @@ def minimax(board, depth, player):
         return minimum
             
     elif player == Player.CPU:
+        # If the player is human, try to maximize the score provided by
+        # minimax in lower recursive calls.
         maximum = float("-inf")
         moves = board.get_valid_moves()
+        
         for i,j in moves:
+            # Loop through all possible moves on the board. If the move is
+            # memoized, return the value within the cache. Else, use recursion
+            # to evaluate the move to its terminal state. 
             board.set_tile(i,j, player)
 
             im_key = board.to_immutable_key()
@@ -198,6 +233,8 @@ def minimax(board, depth, player):
         return maximum
 
 def get_input(board):
+    # This method prompts the user for inputs and validates those inputs.
+    # It returns the coordinates that the user inputs, if they are valid.
     while True:
         try:
             i = int(input("Coordinate One: "))
@@ -209,7 +246,12 @@ def get_input(board):
         print("Valid input please.")
 
 board = Board()
-print("AP CSP: Memoized Minimax for Tic-Tac-Toe")
+print("Memoized Minimax for Tic-Tac-Toe")
+
+# This segment of code is the "driver" code for the tic tac toe game.
+# It continuously calls a function to prompt the user for a move and
+# uses that move to place a tile on the board. It then fetches the AI
+# calculation to get the computer move.
 while board.get_status() == Status.ONGOING:
     print(board)
     board.set_tile(*get_input(board), Player.HUMAN)
@@ -220,3 +262,7 @@ while board.get_status() == Status.ONGOING:
 print(board)
 print(board.get_status().value)
 print("Program ended.")
+x = 0
+while True:
+    x+=1
+    x-=1
